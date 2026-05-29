@@ -100,3 +100,18 @@ A running, honest journal of decisions, dead ends, and fixes for MetaScrub.
   ICC/IHDR field misclassification; dark-mode red + infinite-animation drift.
 - Added robustness regression tests. Final: 75 tests pass, lint clean, build
   green, screenshots captured, 0 console errors, 0 outbound network requests.
+
+## Phase 6/7 — Docs, packaging & ship
+
+- Wrote `README.md` (with screenshots + live demo link), `CHANGELOG.md` (v1.0.0),
+  `THIRD-PARTY-NOTICES.md`. Produced + verified `metascrub-static.zip` (boots
+  from a clean state: 0 external requests, 0 console errors).
+- Created public repo **github.com/Skytuhua/metascrub**, pushed `main` (token used
+  only via an ephemeral push URL — never persisted to `.git/config` or committed).
+- Cut release **v1.0.0** with notes + attached `metascrub-static.zip`
+  (download verified: sha256 matches, unzips, index.html present).
+- Live demo deployed to **GitHub Pages**: https://skytuhua.github.io/metascrub/
+  (Vercel needs interactive CLI login; Pages used instead). Verified live: H1
+  renders, **0 external requests** (privacy holds in production), 0 console errors.
+- Set repo description, 12 topics, and homepage. All commits authored solely by
+  Skytuhua.

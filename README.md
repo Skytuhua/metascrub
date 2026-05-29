@@ -9,6 +9,8 @@
 ![Client-side](https://img.shields.io/badge/processing-100%25%20client--side-1e3a5f.svg)
 ![No upload](https://img.shields.io/badge/uploads-none-1e3a5f.svg)
 
+### ▶ [**Try the live demo**](https://skytuhua.github.io/metascrub/) — no install, nothing uploaded
+
 ![MetaScrub — idle](review/screenshots/01-idle-dark.png)
 
 </div>
