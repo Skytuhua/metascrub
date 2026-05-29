@@ -8,9 +8,11 @@ import { scrubGif } from './gif';
 
 /** Thrown when a format's metadata cannot be stripped in the browser (e.g. TIFF). */
 export class UnsupportedScrubError extends Error {
-  constructor(public readonly format: string) {
+  readonly format: string;
+  constructor(format: string) {
     super(`Scrubbing ${format.toUpperCase()} is not supported in the browser`);
     this.name = 'UnsupportedScrubError';
+    this.format = format;
   }
 }
 

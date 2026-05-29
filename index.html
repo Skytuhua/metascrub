@@ -1,13 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0F172A" />
+    <meta
+      name="description"
+      content="MetaScrub — a private, in-browser image-metadata viewer and scrubber. View and remove EXIF, GPS and other hidden metadata from your photos. Nothing is ever uploaded."
+    />
+    <title>MetaScrub — Strip metadata from your images, 100% in your browser</title>
+    <script>
+      // Apply the saved theme before paint to avoid a flash. Only a theme
+      // string is stored — never any image data.
+      try {
+        var t = localStorage.getItem('metascrub-theme');
+        var d = t ? t === 'dark' : true; // dark by default
+        document.documentElement.classList.toggle('dark', d);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>MetaScrub runs entirely in your browser and needs JavaScript enabled.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

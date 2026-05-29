@@ -56,7 +56,10 @@ export async function readMetadata(bytes: Uint8Array, filename = ''): Promise<Me
 
   let parsed: Record<string, unknown> | undefined;
   try {
-    parsed = (await exifr.parse(asArrayBuffer(bytes), EXIFR_OPTIONS)) as Record<string, unknown> | undefined;
+    parsed = (await exifr.parse(
+      asArrayBuffer(bytes),
+      EXIFR_OPTIONS as unknown as Parameters<typeof exifr.parse>[1],
+    )) as Record<string, unknown> | undefined;
   } catch {
     parsed = undefined;
   }
