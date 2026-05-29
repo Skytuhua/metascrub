@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./heic2any-DBElxqfK.js","./index-BaMptPLn.js","./index-B5iD9NrR.css"])))=>i.map(i=>d[i]);
+import{_ as m}from"./index-BaMptPLn.js";async function p(a,o=.92){const t=await m(()=>import("./heic2any-DBElxqfK.js").then(c=>c.h),__vite__mapDeps([0,1,2]),import.meta.url),r=t.default??t,i=new Blob([a],{type:"image/heic"}),e=await r({blob:i,toType:"image/jpeg",quality:o}),n=Array.isArray(e)?e[0]:e;return{bytes:new Uint8Array(await n.arrayBuffer()),mime:"image/jpeg"}}export{p as heicToCleanJpeg};
