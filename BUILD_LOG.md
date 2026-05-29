@@ -52,3 +52,28 @@ A running, honest journal of decisions, dead ends, and fixes for MetaScrub.
   (`commit.gpgsign=false`) so commits succeed under the owner identity.
 - Baseline `vite build` is green.
 - Wrote `RESEARCH.md`, `SPEC.md`, `ARCHITECTURE.md`, this log.
+
+## Phase 3.5 — UI/UX design (ui-ux-pro-max workflow)
+
+- **Step 1 brief:** product = privacy/security image-metadata scrubber web app;
+  industry = privacy/security tooling; audience = privacy-conscious users +
+  journalists/activists/survivors + photographers; style keywords = minimal,
+  trustworthy, clean, dark, technical, data-focused; stack = `react`.
+- **Setup:** cloned skill to `../uipro`; smoke-tested
+  `../uipro/src/ui-ux-pro-max/scripts/search.py "saas tool" --design-system` (prints a system ✓).
+- **Step 2:** generated `design-system/MASTER.md` — engine returned
+  **"Shield dark + connected green"**: Flat+Dark style, navy `#1E3A5F` primary,
+  green `#22C55E` accent, dark `#0F172A` bg, Lexend+Source Sans 3.
+- **Step 2b:** per-page overrides generated for `hero-idle`, `workspace`,
+  `metadata-report`.
+- **Step 3 domain deep-dives:** ran `--domain style` (flat + OLED dark),
+  `--domain color` (full VPN/Privacy token set incl. card/muted-fg — folded in),
+  `--domain typography` (Corporate Trust: Lexend/Source Sans 3),
+  `--domain ux` (loading-states, stacking-context, continuous-animation
+  anti-patterns — folded into Avoid), `--domain landing` (Minimal Single Column).
+- **Step 4 stack:** ran `--stack react` (no-useEffect-for-derived-state,
+  auto-batch, profile-first) — folded into MASTER "Stack Guidelines".
+- **Key privacy decision:** fonts will be **self-hosted** (woff2 + @font-face),
+  NOT loaded from Google Fonts CDN, to honor `connect-src 'none'` / no-network.
+- **Step 5:** wrote `DESIGN_NOTES.md` (own-words synthesis) — the build contract.
+- **Gate 3.5: PASS.**
