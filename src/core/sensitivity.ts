@@ -13,8 +13,26 @@ export interface Classification {
  * is privacy-sensitive, and attach a plain-English explanation for sensitive
  * fields. Matching is case-insensitive and based on well-known tag names.
  */
+/** ICC-profile-internal field names (color management, not photo PII). */
+const ICC_FIELDS = new Set(
+  [
+    'ProfileVersion', 'ProfileClass', 'ColorSpaceData', 'ProfileConnectionSpace',
+    'ProfileDateTime', 'ProfileFileSignature', 'PrimaryPlatform', 'CMMFlags',
+    'DeviceManufacturer', 'DeviceModel', 'DeviceAttributes', 'RenderingIntent',
+    'ConnectionSpaceIlluminant', 'ProfileCreator', 'ProfileID', 'ProfileDescription',
+    'ProfileCopyright', 'MediaWhitePoint', 'Technology', 'ProfileCMMType',
+    'ColorSpaceData', 'ICCProfile',
+  ].map((s) => s.toLowerCase()),
+);
+
 export function classify(key: string): Classification {
   const k = key.toLowerCase();
+
+  // --- ICC color-profile fields: color management data, not photo PII ---
+  // Checked first so e.g. "ProfileDateTime" is not mistaken for a capture date.
+  if (ICC_FIELDS.has(k) || k.startsWith('profile') || k.startsWith('connectionspace')) {
+    return { group: 'icc', sensitive: false, label: humanize(key) };
+  }
 
   // --- GPS / location: the highest-risk group ---
   if (k.startsWith('gps') || k.includes('latitude') || k.includes('longitude') || k === 'location') {
@@ -152,7 +170,14 @@ export function classify(key: string): Classification {
     k === 'compression' ||
     k === 'resolutionunit' ||
     k === 'xresolution' ||
-    k === 'yresolution'
+    k === 'yresolution' ||
+    // PNG IHDR intrinsic properties (from exifr).
+    k === 'bitdepth' ||
+    k === 'colortype' ||
+    k === 'filter' ||
+    k === 'interlace' ||
+    k === 'width' ||
+    k === 'height'
   ) {
     return { group: 'image', sensitive: false, label: humanize(key) };
   }

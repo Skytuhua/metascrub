@@ -15,7 +15,8 @@ const CSP = [
   "base-uri 'none'",
   "form-action 'none'",
   "object-src 'none'",
-  "frame-ancestors 'none'",
+  // Note: `frame-ancestors` only works as an HTTP header (ignored in <meta>),
+  // so it's documented for host config rather than set here.
 ].join('; ')
 
 function cspPlugin(): Plugin {

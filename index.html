@@ -11,15 +11,7 @@
       content="MetaScrub — a private, in-browser image-metadata viewer and scrubber. View and remove EXIF, GPS and other hidden metadata from your photos. Nothing is ever uploaded."
     />
     <title>MetaScrub — Strip metadata from your images, 100% in your browser</title>
-    <script>
-      // Apply the saved theme before paint to avoid a flash. Only a theme
-      // string is stored — never any image data.
-      try {
-        var t = localStorage.getItem('metascrub-theme');
-        var d = t ? t === 'dark' : true; // dark by default
-        document.documentElement.classList.toggle('dark', d);
-      } catch (e) {}
-    </script>
+    <script src="./theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

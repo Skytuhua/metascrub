@@ -152,6 +152,13 @@ export function buildPng(): Uint8Array {
   ]);
 }
 
+/** A PNG with no metadata chunks — only intrinsic image data. */
+export function buildCleanPng(): Uint8Array {
+  const sig = bytes(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a);
+  const ihdrData = bytes(0, 0, 0, 2, 0, 0, 0, 2, 8, 2, 0, 0, 0); // 2x2 RGB
+  return concat([sig, pngChunk('IHDR', ihdrData), pngChunk('IDAT', enc('imgdata')), pngChunk('IEND', new Uint8Array(0))]);
+}
+
 export function pngChunkTypes(b: Uint8Array): string[] {
   const types: string[] = [];
   const dv = new DataView(b.buffer, b.byteOffset, b.byteLength);

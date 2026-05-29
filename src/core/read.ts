@@ -18,7 +18,10 @@ const SKIP_KEYS = new Set(
     'GPSLongitudeRef',
     'GPSAltitudeRef',
     'GPSVersionID',
+    'ThumbnailWidth', // exifr emits 0 even with no real thumbnail — noise
+    'ThumbnailHeight',
     'ApplicationNotes', // raw XMP packet (shown via parsed XMP fields instead)
+    'errors', // exifr surfaces a parse-error array, not real metadata
   ].map((k) => k.toLowerCase()),
 );
 
@@ -108,7 +111,10 @@ export async function readMetadata(bytes: Uint8Array, filename = ''): Promise<Me
   }
 
   const hasSensitive = fields.some((f) => f.sensitive) || gps !== undefined;
-  const hasMetadata = fields.length > 0 || gps !== undefined;
+  // "Has metadata" means metadata a scrub would remove — intrinsic image
+  // dimensions/color-space don't count, so a plain PNG reads as already clean.
+  const hasRemovable = fields.some((f) => f.group !== 'image');
+  const hasMetadata = hasRemovable || gps !== undefined || hasThumbnail;
 
   return {
     format,

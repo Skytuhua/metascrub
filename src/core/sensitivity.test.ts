@@ -21,6 +21,12 @@ describe('classify', () => {
     expect(c.group).toBe('orientation');
     expect(c.sensitive).toBe(false);
   });
+  it('treats ICC color-profile fields as non-sensitive', () => {
+    expect(classify('ProfileDateTime').group).toBe('icc');
+    expect(classify('ProfileDateTime').sensitive).toBe(false);
+    expect(classify('DeviceModel').group).toBe('icc');
+    expect(classify('ProfileDescription').sensitive).toBe(false);
+  });
   it('treats dimensions as non-sensitive image data', () => {
     expect(classify('ImageWidth').sensitive).toBe(false);
     expect(classify('ColorSpace').group).toBe('image');

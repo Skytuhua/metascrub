@@ -29,7 +29,10 @@ export function WorkItemCard({ item, onScrub, onDownload, onRemove }: Props) {
   const [imgError, setImgError] = useState(false);
   const r = item.report;
   const sensitiveCount = r ? r.fields.filter((f) => f.sensitive).length : 0;
-  const canExpand = item.status !== 'reading' && !!r && r.hasMetadata;
+  // Once cleaned, the expanded view reflects the cleaned file (proof it worked).
+  const shown = item.status === 'done' && item.afterReport ? item.afterReport : r;
+  const isAfter = item.status === 'done' && !!item.afterReport;
+  const canExpand = item.status !== 'reading' && !!shown && (shown.hasMetadata || isAfter);
 
   return (
     <li className="card overflow-hidden">
@@ -98,11 +101,21 @@ export function WorkItemCard({ item, onScrub, onDownload, onRemove }: Props) {
         </div>
       </div>
 
-      {/* Expanded metadata */}
-      {expanded && r && (
+      {/* Expanded metadata (cleaned report once scrubbed) */}
+      {expanded && shown && (
         <div className="space-y-3 border-t border-border bg-muted/30 p-3 sm:p-4">
-          {r.gps && <GpsMap pos={r.gps} />}
-          <MetadataPanel report={r} />
+          {isAfter && (
+            <p className="flex items-center gap-1.5 text-xs font-medium text-accent">
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+              Metadata in the cleaned file{shown.hasMetadata ? ' (sensitive data removed)' : ' — completely empty'}
+            </p>
+          )}
+          {!isAfter && shown.gps && <GpsMap pos={shown.gps} />}
+          {shown.fields.length > 0 ? (
+            <MetadataPanel report={shown} />
+          ) : (
+            <p className="text-sm text-muted-fg">No metadata remains in this file.</p>
+          )}
         </div>
       )}
     </li>
