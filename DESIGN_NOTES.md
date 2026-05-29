@@ -30,7 +30,10 @@ the data does the talking.
 - Primary navy `#1E3A5F` for secondary surfaces/headers.
 - **Sensitive signalling:** GPS / device serial / software / precise timestamps
   are flagged with **amber `#F59E0B`** ("present, review this") escalating to
-  **red `#DC2626`** for location specifically. This is the emotional core of the
+  red for location specifically. *Deviation (documented):* the spec token is
+  `#DC2626`, used as-is in **light** mode; in **dark** mode it's raised to
+  `#EF4444` (red-500) so the alarm red stays legible on the `#0F172A` field
+  (`#DC2626` on that background is a marginal-contrast case). This is the emotional core of the
   UI — make the leak *visible* before offering to remove it.
 - Light mode mirrors the same roles on `#F8FAFC` / white cards for users who want it.
 

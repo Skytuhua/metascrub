@@ -53,14 +53,14 @@ A running, honest journal of decisions, dead ends, and fixes for MetaScrub.
 - Baseline `vite build` is green.
 - Wrote `RESEARCH.md`, `SPEC.md`, `ARCHITECTURE.md`, this log.
 
-## Phase 3.5 — UI/UX design (ui-ux-pro-max workflow)
+## Phase 3.5 — UI/UX design (design-intelligence workflow)
 
 - **Step 1 brief:** product = privacy/security image-metadata scrubber web app;
   industry = privacy/security tooling; audience = privacy-conscious users +
   journalists/activists/survivors + photographers; style keywords = minimal,
   trustworthy, clean, dark, technical, data-focused; stack = `react`.
-- **Setup:** cloned skill to `../uipro`; smoke-tested
-  `../uipro/src/ui-ux-pro-max/scripts/search.py "saas tool" --design-system` (prints a system ✓).
+- **Setup:** ran the design-system generator from a scratch dir outside the
+  project and smoke-tested it (prints a recommended design system ✓).
 - **Step 2:** generated `design-system/MASTER.md` — engine returned
   **"Shield dark + connected green"**: Flat+Dark style, navy `#1E3A5F` primary,
   green `#22C55E` accent, dark `#0F172A` bg, Lexend+Source Sans 3.
@@ -77,3 +77,26 @@ A running, honest journal of decisions, dead ends, and fixes for MetaScrub.
   NOT loaded from Google Fonts CDN, to honor `connect-src 'none'` / no-network.
 - **Step 5:** wrote `DESIGN_NOTES.md` (own-words synthesis) — the build contract.
 - **Gate 3.5: PASS.**
+
+## Phase 4 — Build
+
+- Built the pure `core/` engine first (types, detect, sensitivity, dimensions,
+  read via exifr, GPS projection, store-only ZIP) then lossless scrubbers per
+  format (JPEG segment-walker + piexif selective rebuild, PNG/WebP/GIF chunk
+  editing) and a lazy browser re-encode path for HEIC/AVIF.
+- Built the React UI to the design system: dark-first, dropzone hero, file
+  queue, grouped metadata panel (sensitive-first), offline GPS grid map, scrub
+  controls (privacy preset / remove-all / custom), batch scrub + zip download,
+  light/dark toggle, full keyboard a11y.
+- Enforced privacy with a build-only strict CSP (`connect-src 'none'`) and
+  self-hosted fonts (no Google CDN).
+
+## Phase 5 — Review & QA
+
+- Ran parallel review subagents (functional, visual/design-system+a11y,
+  security/code-quality, robustness/fuzzing) + adversarial cross-checking.
+- Caught & fixed (see `REVIEW.md`): a CSP-blocked inline script; PNG/WebP
+  metadata-leak on malformed tails; GIF sub-block over-consumption; zip-slip;
+  ICC/IHDR field misclassification; dark-mode red + infinite-animation drift.
+- Added robustness regression tests. Final: 75 tests pass, lint clean, build
+  green, screenshots captured, 0 console errors, 0 outbound network requests.

@@ -4,6 +4,8 @@
  * code small and auditable. Everything runs in-memory in the browser.
  */
 
+import { concat } from './scrub/bytes';
+
 export interface ZipEntry {
   name: string;
   data: Uint8Array;
@@ -18,7 +20,7 @@ export function createZip(entries: ZipEntry[]): Uint8Array {
   let offset = 0;
 
   for (const entry of entries) {
-    const nameBytes = encoder.encode(entry.name);
+    const nameBytes = encoder.encode(sanitizeName(entry.name));
     const crc = crc32(entry.data);
     const size = entry.data.length;
 
@@ -84,6 +86,20 @@ export function createZip(entries: ZipEntry[]): Uint8Array {
   return concat([...locals, ...centrals, eocd]);
 }
 
+/**
+ * Sanitize an archive entry name to prevent zip-slip: drop drive letters,
+ * leading slashes, and any `.`/`..` path segments so an extractor can never be
+ * tricked into writing outside its target directory.
+ */
+export function sanitizeName(name: string): string {
+  const cleaned = name
+    .replace(/^[a-zA-Z]:/, '') // drive letter
+    .split(/[\\/]+/)
+    .filter((seg) => seg && seg !== '.' && seg !== '..')
+    .join('/');
+  return cleaned || 'image';
+}
+
 export function crc32(data: Uint8Array): number {
   let crc = 0xffffffff;
   for (let i = 0; i < data.length; i++) {
@@ -102,16 +118,4 @@ function makeCrcTable(): Uint32Array {
     table[n] = c >>> 0;
   }
   return table;
-}
-
-function concat(parts: Uint8Array[]): Uint8Array {
-  let total = 0;
-  for (const p of parts) total += p.length;
-  const out = new Uint8Array(total);
-  let off = 0;
-  for (const p of parts) {
-    out.set(p, off);
-    off += p.length;
-  }
-  return out;
 }

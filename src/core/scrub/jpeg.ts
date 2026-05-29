@@ -55,7 +55,10 @@ function removeGroup(group: FieldGroup, o: ScrubOptions): boolean {
 /**
  * Scrub a JPEG **losslessly** (pixel/scan data is never re-encoded).
  *
- * - Full strip-all → drop every metadata marker segment outright (guaranteed empty).
+ * - Full strip-all → drop every metadata-bearing marker segment (EXIF/XMP/ICC/
+ *   IPTC/comment/unknown APPn). The JFIF density (APP0) and Adobe colour-
+ *   transform (APP14) segments are intentionally kept: they carry no identifying
+ *   data and are needed to render the image correctly.
  * - Otherwise → rebuild a minimal EXIF block keeping only the groups the user
  *   chose to keep (e.g. orientation), and drop the rest plus the other metadata
  *   segments (XMP/ICC/IPTC/comment) per the options.

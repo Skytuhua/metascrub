@@ -1,4 +1,5 @@
 import type { ImageFormat, ScrubCapability } from './types';
+import { ascii } from './scrub/bytes';
 
 /**
  * Detect the image format from magic bytes (preferred) with a filename
@@ -131,12 +132,4 @@ export function capabilityFor(format: ImageFormat): ScrubCapability {
     default:
       return 'readonly';
   }
-}
-
-function ascii(b: Uint8Array, start: number, len: number): string {
-  let s = '';
-  for (let i = start; i < start + len && i < b.length; i++) {
-    s += String.fromCharCode(b[i]);
-  }
-  return s;
 }

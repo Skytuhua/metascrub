@@ -1,4 +1,7 @@
 import type { ScrubOptions } from '../types';
+import { concat, ascii } from './bytes';
+
+const META_CHUNKS = new Set(['EXIF', 'XMP ', 'ICCP']);
 
 // VP8X feature-flag bits within the flags byte (MSB..LSB): R R I L E X A R.
 const FLAG_ICC = 0x20; // bit 5
@@ -35,16 +38,18 @@ export function scrubWebp(bytes: Uint8Array, opts: ScrubOptions): Uint8Array {
     const size = dv.getUint32(i + 4, true); // little-endian
     const padded = size + (size % 2); // chunks are padded to even length
     const chunkEnd = i + 8 + padded;
-    if (chunkEnd > bytes.length) {
-      kept.push(bytes.subarray(i)); // malformed tail
-      i = bytes.length;
-      break;
-    }
 
     let drop = false;
     if (fourcc === 'EXIF') drop = dropExif;
     else if (fourcc === 'XMP ') drop = dropXmp;
     else if (fourcc === 'ICCP') drop = dropIcc;
+
+    if (chunkEnd > bytes.length) {
+      // Malformed/truncated final chunk. Fail safe: discard a metadata chunk we
+      // would drop (so it can't leak), otherwise copy the tail verbatim.
+      if (!(drop || META_CHUNKS.has(fourcc))) kept.push(bytes.subarray(i));
+      break;
+    }
 
     if (!drop) {
       const chunk = bytes.slice(i, chunkEnd);
@@ -69,23 +74,5 @@ export function scrubWebp(bytes: Uint8Array, opts: ScrubOptions): Uint8Array {
   odv.setUint32(4, 4 + body.length, true); // size = "WEBP" + chunks
   out.set([0x57, 0x45, 0x42, 0x50], 8); // "WEBP"
   out.set(body, 12);
-  return out;
-}
-
-function ascii(b: Uint8Array, off: number, len: number): string {
-  let s = '';
-  for (let j = 0; j < len; j++) s += String.fromCharCode(b[off + j]);
-  return s;
-}
-
-function concat(parts: Uint8Array[]): Uint8Array {
-  let total = 0;
-  for (const p of parts) total += p.length;
-  const out = new Uint8Array(total);
-  let off = 0;
-  for (const p of parts) {
-    out.set(p, off);
-    off += p.length;
-  }
   return out;
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShieldCheck, LockKeyhole, Layers, Sparkles, Eraser, Download, Trash2 } from 'lucide-react';
+import { ShieldCheck, LockKeyhole, Layers, Sparkles, Eraser, Download, Trash2, Loader2 } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -129,8 +129,8 @@ export function App() {
                 <ScrubControls options={options} preset={preset} onPreset={choosePreset} onToggle={toggleOption} />
                 <div className="card flex flex-col gap-2 p-4">
                   <button type="button" onClick={scrubAll} disabled={scrubbable.length === 0 || busy} className="btn-accent">
-                    <Eraser className="h-4 w-4" aria-hidden="true" />
-                    Scrub all ({scrubbable.length})
+                    {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Eraser className="h-4 w-4" aria-hidden="true" />}
+                    {busy ? 'Scrubbing…' : `Scrub all (${scrubbable.length})`}
                   </button>
                   <button type="button" onClick={downloadAll} disabled={doneItems.length === 0} className="btn-ghost">
                     <Download className="h-4 w-4" aria-hidden="true" />

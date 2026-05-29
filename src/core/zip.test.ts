@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { createZip, crc32 } from './zip';
+import { createZip, crc32, sanitizeName } from './zip';
 import { enc } from '../test/fixtures';
+
+describe('sanitizeName (zip-slip defense)', () => {
+  it('strips path traversal and absolute path segments', () => {
+    expect(sanitizeName('../../etc/passwd')).toBe('etc/passwd');
+    expect(sanitizeName('/var/secret.jpg')).toBe('var/secret.jpg');
+    expect(sanitizeName('C:\\Windows\\evil.jpg')).toBe('Windows/evil.jpg');
+    expect(sanitizeName('..')).toBe('image');
+    expect(sanitizeName('photo.clean.jpg')).toBe('photo.clean.jpg');
+  });
+});
 
 describe('crc32', () => {
   it('computes the known CRC32 of "123456789"', () => {

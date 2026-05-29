@@ -1,4 +1,5 @@
 import piexif from 'piexifjs';
+import { concat } from './bytes';
 
 /** Convert raw bytes to a latin1 "binary string" (piexifjs's data format). */
 export function bytesToBinary(bytes: Uint8Array): string {
@@ -151,16 +152,4 @@ function shouldDrop(marker: number, b: Uint8Array, payloadOff: number, cfg: Segm
   }
   // Any other APPn (3–12, 15) is non-essential metadata.
   return cfg.dropUnknownApp;
-}
-
-function concat(parts: Uint8Array[]): Uint8Array {
-  let total = 0;
-  for (const p of parts) total += p.length;
-  const out = new Uint8Array(total);
-  let off = 0;
-  for (const p of parts) {
-    out.set(p, off);
-    off += p.length;
-  }
-  return out;
 }

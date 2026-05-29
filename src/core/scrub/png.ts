@@ -1,6 +1,8 @@
 import type { ScrubOptions } from '../types';
+import { concat, ascii } from './bytes';
 
 const SIG = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+const META_CHUNKS = new Set(['tEXt', 'zTXt', 'iTXt', 'eXIf', 'tIME', 'iCCP']);
 
 /**
  * Scrub a PNG **losslessly** by dropping metadata chunks (tEXt/zTXt/iTXt/eXIf/
@@ -32,11 +34,6 @@ export function scrubPng(bytes: Uint8Array, opts: ScrubOptions): Uint8Array {
     const len = dv.getUint32(i);
     const type = ascii(bytes, i + 4, 4);
     const chunkEnd = i + 12 + len; // length(4)+type(4)+data(len)+crc(4)
-    if (chunkEnd > bytes.length) {
-      kept.push(bytes.subarray(i)); // malformed tail — copy verbatim
-      i = bytes.length;
-      break;
-    }
 
     let drop = false;
     switch (type) {
@@ -58,28 +55,17 @@ export function scrubPng(bytes: Uint8Array, opts: ScrubOptions): Uint8Array {
         drop = false;
     }
 
+    if (chunkEnd > bytes.length) {
+      // Malformed/truncated final chunk. A scrubber must FAIL SAFE: if it's a
+      // metadata chunk we'd drop, discard the tail; otherwise copy it verbatim.
+      if (!(drop || META_CHUNKS.has(type))) kept.push(bytes.subarray(i));
+      break;
+    }
+
     if (!drop) kept.push(bytes.subarray(i, chunkEnd));
     i = chunkEnd;
     if (type === 'IEND') break;
   }
 
   return concat(kept);
-}
-
-function ascii(b: Uint8Array, off: number, len: number): string {
-  let s = '';
-  for (let j = 0; j < len; j++) s += String.fromCharCode(b[off + j]);
-  return s;
-}
-
-function concat(parts: Uint8Array[]): Uint8Array {
-  let total = 0;
-  for (const p of parts) total += p.length;
-  const out = new Uint8Array(total);
-  let off = 0;
-  for (const p of parts) {
-    out.set(p, off);
-    off += p.length;
-  }
-  return out;
 }
